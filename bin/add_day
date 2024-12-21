@@ -1,0 +1,118 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'net/http'
+require 'uri'
+require 'date'
+
+options = {}
+
+OptionParser.new do |opt|
+  opt.on('-d', '--day NUMBER') { |o| options[:day] = o }
+end.parse!
+
+
+def invalid_day?(day)
+  return false unless day
+
+  day.to_i < 1 || day.to_i > 24
+end
+
+abort "Error: Please provide a day between 1 and 24." if invalid_day?(options[:day])
+
+def create_haskell_file(day)
+  day_padded = day.to_s.rjust(2, "0")
+  filepath = "src/Day#{day_padded}.hs"
+  input_filepath = "inputs/day#{day_padded}.txt"
+
+  return puts("File #{filepath} already exists, skipping.") if File.file?(filepath)
+
+  File.open(filepath, "w") do |f|
+    f.write(<<~HASKELL)
+      module Day#{day} (part1, part2) where
+
+      import Helpers (readStrings)
+
+      part1 :: IO Int
+      part1 = return 1
+
+      part2 :: IO Int
+      part2 = return 2
+
+      input :: IO [String]
+      input = readStrings "#{input_filepath}"
+    HASKELL
+  end
+
+  puts "Successfully created #{filepath}"
+end
+
+def download_input(day)
+  day_padded = day.to_s.rjust(2, "0")
+  filepath = "inputs/day#{day_padded}.txt"
+
+  return puts("File #{filepath} already exists, skipping.") if File.file?(filepath)
+
+  session_token = File.read(".aoc_session_token").strip()
+
+  uri = URI("https://adventofcode.com/2024/day/#{day}/input")
+  req = Net::HTTP::Get.new(uri)
+  req['Cookie'] = "session=#{session_token}"
+
+  res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
+    http.request(req)
+  end
+
+  File.open(filepath, "w") { |f| f.write(res.body) }
+
+  puts "Successfully created #{filepath}"
+end
+
+def update_cabal_file(day)
+  day_padded = day.to_s.rjust(2, "0")
+  filepath = "aoc2024.cabal"
+  current_content = File.read(filepath)
+
+  return puts("Cabal file already includes Day#{day_padded}, skipping.") if current_content.include?("Day#{day_padded}")
+
+  new_content = current_content.sub(/(exposed-modules:\n)(\s+)/, "\\1\\2Day#{day_padded}\n\\2")
+
+  File.open(filepath, "w") { |f| f.write new_content }
+
+  puts "Successfully updated #{filepath}"
+end
+
+def update_main(day)
+  day_padded = day.to_s.rjust(2, "0")
+  filepath = "app/Main.hs"
+  current_content = File.read(filepath)
+
+  return puts("Main file already includes Day#{day_padded}, skipping.") if current_content.include?("run #{day} =")
+
+  new_content = current_content.sub(
+    "run _ =",
+    "run #{day} = runPretty #{day} (Day#{day_padded}.part1, Day#{day_padded}.part2)\nrun _ ="
+  )
+
+  File.open(filepath, "w") { |f| f.write new_content }
+
+  puts "Successfully updated #{filepath}"
+end
+
+def add_day(day)
+  puts "Adding day #{day...}"
+  create_haskell_file(day)
+  download_input(day)
+  update_cabal_file(day)
+  update_main(day)
+  puts ""
+end
+
+if options[:day]
+  add_day(options[:day].to_i)
+else
+  today = Date.today
+  max_day = today > Date.new(2024, 12, 25) ? 25 : today.mday
+
+  (1..max_day).each { |day| add_day(day) }
+end

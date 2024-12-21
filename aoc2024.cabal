@@ -13,7 +13,7 @@ common basics
     ghc-options: -Wall
 
 common dependencies
-    build-depends: 
+    build-depends:
         base ^>=4.17.2.1,
         containers,
         regex-applicative,
@@ -27,17 +27,17 @@ library
     import:
         basics, dependencies
     exposed-modules:
-        Helpers
         Day01
+        Helpers
     hs-source-dirs:
         src
 
 executable aoc2024-exe
-    import: 
+    import:
         basics, dependencies
     build-depends:
         aoc2024
-    main-is: 
+    main-is:
         Main.hs
-    hs-source-dirs:   
+    hs-source-dirs:
         app
