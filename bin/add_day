@@ -29,18 +29,16 @@ def create_haskell_file(day)
 
   File.open(filepath, "w") do |f|
     f.write(<<~HASKELL)
-      module Day#{day} (part1, part2) where
+      module Day#{day_padded} (part1, part2) where
 
-      import Helpers (readStrings)
+      part1 :: String -> Int
+      part1 = const 1 . prepare
 
-      part1 :: IO Int
-      part1 = return 1
+      part2 :: String -> Int
+      part2 = const 2 . prepare
 
-      part2 :: IO Int
-      part2 = return 2
-
-      input :: IO [String]
-      input = readStrings "#{input_filepath}"
+      prepare :: String -> String
+      prepare = id
     HASKELL
   end
 
