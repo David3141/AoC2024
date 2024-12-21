@@ -87,10 +87,14 @@ def update_main(day)
 
   return puts("Main file already includes Day#{day_padded}, skipping.") if current_content.include?("run #{day} =")
 
-  new_content = current_content.sub(
-    "run _ =",
-    "run #{day} = runPretty #{day} (Day#{day_padded}.part1, Day#{day_padded}.part2)\nrun _ ="
-  )
+  new_content = current_content
+    .sub(
+      "run _ =",
+      "run #{day} = runPretty #{day} (Day#{day_padded}.part1, Day#{day_padded}.part2)\nrun _ ="
+    ).sub(
+      "import qualified Day",
+      "import qualified Day#{day_padded}\nimport qualified Day"
+    )
 
   File.open(filepath, "w") { |f| f.write new_content }
 
