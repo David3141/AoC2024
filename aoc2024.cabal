@@ -27,6 +27,7 @@ library
     import:
         basics, dependencies
     exposed-modules:
+        Day02
         Day01
         Helpers
     hs-source-dirs:

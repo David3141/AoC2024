@@ -27,18 +27,14 @@ import Text.Regex.Applicative.Common (decimal)
 readAsSingleString :: FilePath -> IO String
 readAsSingleString filePath = readFile =<< getDataFileName filePath
 
-readStrings :: FilePath -> IO [String]
-readStrings filePath = lines <$> (readFile =<< getDataFileName filePath)
+readStrings :: String -> [String]
+readStrings = lines
 
-readInts :: FilePath -> IO [Int]
-readInts filePath =
-  map read . lines
-    <$> (readFile =<< getDataFileName filePath)
+readInts :: String -> [Int]
+readInts = map read . lines
 
-readIntLists :: String -> FilePath -> IO [[Int]]
-readIntLists separator filePath =
-  map (map read . splitOn separator) . lines
-    <$> (readFile =<< getDataFileName filePath)
+readIntLists :: String -> String -> [[Int]]
+readIntLists separator = map (map read . splitOn separator) . lines
 
 readCommaSeparatedInts :: String -> [Int]
 readCommaSeparatedInts = map read . splitOn ","

@@ -2,6 +2,7 @@ module Main where
 import System.Environment (getArgs)
 import System.TimeIt (timeIt)
 
+import qualified Day02
 import qualified Day01
 import Text.Printf (printf)
 import Paths_aoc2024 ( getDataFileName )
@@ -13,6 +14,7 @@ main = do
 
 run :: Int -> IO ()
 run 1 = runPretty 1 (Day01.part1, Day01.part2)
+run 2 = runPretty 2 (Day02.part1, Day02.part2)
 run _ = putStrLn "Not implemented"
 
 
