@@ -2,6 +2,7 @@ module Helpers
   ( countMismatches,
     iterateWithCycleDetect,
     fMatch,
+    fMatchAll,
     mapBoth,
     parseInt,
     readAsSingleString,
@@ -21,7 +22,7 @@ import qualified Data.Map.Strict as Map
 import Data.Maybe (fromJust)
 import Data.Ord (Down (Down), comparing)
 import Paths_aoc2024 (getDataFileName)
-import Text.Regex.Applicative (Alternative (many), RE, match, sym)
+import Text.Regex.Applicative (Alternative (many), RE, match, sym, findFirstInfix)
 import Text.Regex.Applicative.Common (decimal)
 
 readAsSingleString :: FilePath -> IO String
@@ -45,6 +46,12 @@ parseInt = many (sym ' ') *> decimal
 -- | like match but forces the result with fromJust
 fMatch :: RE Char c -> String -> c
 fMatch regEx = fromJust . match regEx
+
+fMatchAll :: RE Char a -> String -> [a]
+fMatchAll _ "" = []
+fMatchAll re input = case findFirstInfix re input of
+      Just (_, found, remaining) -> found : fMatchAll re remaining
+      Nothing -> []
 
 sortDesc :: (Ord a) => [a] -> [a]
 sortDesc = sortBy (comparing Down)

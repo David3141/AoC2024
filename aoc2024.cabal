@@ -27,6 +27,7 @@ library
     import:
         basics, dependencies
     exposed-modules:
+        Day03
         Day02
         Day01
         Helpers
