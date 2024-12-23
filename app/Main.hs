@@ -2,6 +2,7 @@ module Main where
 import System.Environment (getArgs)
 import System.TimeIt (timeIt)
 
+import qualified Day04
 import qualified Day03
 import qualified Day02
 import qualified Day01
@@ -17,6 +18,7 @@ run :: Int -> IO ()
 run 1 = runPretty 1 (Day01.part1, Day01.part2)
 run 2 = runPretty 2 (Day02.part1, Day02.part2)
 run 3 = runPretty 3 (Day03.part1, Day03.part2)
+run 4 = runPretty 4 (Day04.part1, Day04.part2)
 run _ = putStrLn "Not implemented"
 
 

@@ -1,6 +1,8 @@
+{-# LANGUAGE TupleSections #-}
 module MatrixHelpers
   ( module Data.Array.IArray,
     Matrix,
+    allDirectionsOfLength,
     findIndex,
     fromStrings,
     getCol,
@@ -99,3 +101,22 @@ printMatrix matrix = do
   putStrLn $ foldl' (++) "  " $ map show [1 .. maxN]
 
   mapM_ printRowWithM $ zip [1 .. maxM] rows
+
+allDirectionsOfLength :: Int -> (Int, Int) -> Matrix a -> [[a]]
+allDirectionsOfLength l (m, n) matrix = [north, northEast, east, southEast, south, southWest, west, northWest]
+  where
+    delta = l - 1
+    (maxM, maxN) = maxBounds matrix
+    mUpward = [m, m - 1 .. (max 1 (m - delta))]
+    mDownward = [m .. (min (m + delta) maxM)]
+    nRight = [n .. (min (n + delta) maxN)]
+    nLeft = [n, n - 1 .. (max 1 (n - delta))]
+
+    north = map ((matrix A.!) . (,n)) mUpward
+    south = map ((matrix A.!) . (,n)) mDownward
+    east = map ((matrix A.!) . (m,)) nRight
+    west = map ((matrix A.!) . (m,)) nLeft
+    northEast = zipWith (curry (matrix A.!)) mUpward nRight
+    southEast = zipWith (curry (matrix A.!)) mDownward nRight
+    southWest = zipWith (curry (matrix A.!)) mDownward nLeft
+    northWest = zipWith (curry (matrix A.!)) mUpward nLeft
