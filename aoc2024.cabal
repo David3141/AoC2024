@@ -15,6 +15,7 @@ common basics
 common dependencies
     build-depends:
         base ^>=4.17.2.1,
+        array,
         containers,
         regex-applicative,
         split,
@@ -31,6 +32,7 @@ library
         Day02
         Day01
         Helpers
+        MatrixHelpers
     hs-source-dirs:
         src
 
